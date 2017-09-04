@@ -19,3 +19,5 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::match(['get', 'post'], '/predictions/create', 'PredictionController@create');
+Route::match(['get', 'post'], 'predictions/freemium/view', 'PredictionController@view');
+Route::post('user/rating', 'RatingController@rate');

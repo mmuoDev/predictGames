@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Country;
 use App\User;
 use App\MakeFreePredict;
 use App\ViewFreePredict;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Sys_rating;
+use DB;
 
 class RegisterController extends Controller
 {
@@ -47,12 +50,18 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
+    public function showRegistrationForm()
+    {
+        $countries = DB::select("select * from countries");
+        return view("auth.register", compact("countries"));
+    }
     protected function validator(array $data)
     {
         return Validator::make($data, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'country' => 'required'
         ]);
     }
 
@@ -67,13 +76,17 @@ class RegisterController extends Controller
         $user =  User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'make_prediction_category' => 1,
+            'user_rating' => 1,
             'password' => bcrypt($data['password']),
+            'country' => $data['country']
         ]);
 
         /**
          * Once user is created, give user free counts on making predictions and viewing predictions
          */
         if($user){
+            /**
             MakeFreePredict::create([
                 'user_id' => $user->id,
                 'count' => 2
@@ -83,8 +96,19 @@ class RegisterController extends Controller
                 'user_id' => $user->id,
                 'count' => 2
             ]);
+             * **/
+            Sys_rating::create([
+                'user_id' => $user->id,
+                'poor' => 1, //Default rating for a new user
+                'good' => 0,
+                'expert' => 0
+
+            ]);
+
         }
         return $user;
 
     }
+
+
 }

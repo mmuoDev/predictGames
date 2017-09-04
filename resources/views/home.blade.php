@@ -13,23 +13,50 @@
                                 </ul>
                                     <div id="myTabContent" class="tab-content">
                                     <div class="tab-pane active in" id="login">
+
                                         <table class='table table-bordered' id='predictions'>
                                             <thead>
                                             <tr>
                                                 <th>Match</th>
                                                 <th>Match Date</th>
-                                                <th>Predictor's Star</th>
-                                                <th>See Prediction</th>
+                                                <th>Predictor (Level)</th>
+                                                <th></th>
                                             </tr>
                                             </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            </tbody>
+                                            @if(isset($free_predictions))
+                                                <tbody>
+                                                    @foreach($free_predictions as $free_prediction)
+                                                        <?php
+                                                        $date = date("D, M j, Y", strtotime($free_prediction->game_date));
+                                                        ?>
+                                                    <tr>
+                                                        <td>{{$free_prediction->game}}</td>
+                                                        <td>{{$date}}</td>
+                                                        <td>{{ucfirst($free_prediction->fullname)}}
+
+                                                            @if($free_prediction->id == 1)
+                                                                ({{ucfirst($free_prediction->status)}}) <i class="fa fa-frown-o" aria-hidden="true"></i>
+                                                            @elseif($free_prediction->id == 2)
+                                                                ({{ucfirst($free_prediction->status)}}) <i class="fa fa-meh-o" aria-hidden="true"></i>
+                                                            @elseif($free_prediction->id == 3)
+                                                                ({{ucfirst($free_prediction->status)}}) <i class="fa fa-smile-o" aria-hidden="true"></i>
+                                                            @endif
+                                                            </td>
+                                                        <td>
+                                                            <form action="{{url('predictions/freemium/view')}}" method="post">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                                <input type="hidden" name="game_id" value="{{$free_prediction->game_id}}">
+                                                                <input type="hidden" name="user_id" value="{{$free_prediction->user_id}}">
+                                                                <button type="submit" class="btn btn-danger" aria-label="Left Align">
+                                                                    View
+                                                                    <span class="fa fa-eye fa-lg" aria-hidden="true"></span>
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            @endif
                                         </table>
                                     </div>
                                     <div class="tab-pane fade" id="create">
