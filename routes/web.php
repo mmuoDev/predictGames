@@ -21,3 +21,15 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::match(['get', 'post'], '/predictions/create', 'PredictionController@create');
 Route::match(['get', 'post'], 'predictions/freemium/view', 'PredictionController@view');
 Route::post('user/rating', 'RatingController@rate');
+
+
+
+Route::group(['prefix' => 'predictors'], function () {
+    Route::get('/', 'PredictorController@index');
+    Route::get('/{id}', 'PredictorController@show');
+    Route::post('/subscribe', 'PredictorController@subscribe');
+
+});
+
+Route::get('/subscriptions', 'SubscriptionController@index')->name('my-subscriptions');
+Route::get('/subscriptions/{id}', 'SubscriptionController@show')->name('show-subscription');

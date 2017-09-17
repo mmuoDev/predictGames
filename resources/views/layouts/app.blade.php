@@ -37,6 +37,15 @@
                         {{--
                         <ul class="nav navbar-nav">
 
+                        <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Predictors <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown">
+                                        <a href="{{url('/predictors')}}" >All Prediction</a>
+                                    </li>
+                                </ul>
+                            </li>
+
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Predictions <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
@@ -48,14 +57,21 @@
                             </li>
                             <li class=" dropdown"><a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Subscriptions <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">View Managers</a></li>
-                                    <li><a href="#">Add New</a></li>
+                                    <li><a href="{{url('/subscriptions')}}">My Subscriptions</a></li>
                                 </ul>
                             </li>
 
                         </ul>
                         --}}
                         <ul class="nav navbar-nav pull-right">
+                        <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Predictors <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown">
+                                        <a href="{{url('/predictors')}}" >All Predictors</a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Predictions <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
@@ -67,8 +83,7 @@
                             </li>
                             <li class=" dropdown"><a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Subscriptions <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">View Managers</a></li>
-                                    <li><a href="#">Add New</a></li>
+                                    <li><a href="{{url('/subscriptions')}}">My Subscriptions</a></li>
                                 </ul>
                             </li>
                             <li class=" dropdown"><a href="#" class="dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> {{Auth::user()->name}} <span class="caret"></span></a>
@@ -101,7 +116,7 @@
 <script src="{{ asset('js/jquery.js') }}"></script>
 <script src="{{ asset('js/jquery-ui.js') }}"></script>
 <script src="{{asset('js/bootstrap.min.js')}}"></script>
-<script src="{{asset('js/datatable.js')}}"></script> /
+<script src="{{asset('js/datatable.js')}}"></script>
 <script>
     $( function() {
         $( "#datepicker" ).datepicker();
