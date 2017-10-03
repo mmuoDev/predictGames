@@ -18,11 +18,13 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::match(['get', 'post'], '/predictions/create', 'PredictionController@create');
-Route::match(['get', 'post'], 'predictions/freemium/view', 'PredictionController@view');
 Route::post('user/rating', 'RatingController@rate');
-
-
+Route::post('/fetch-match', 'PredictionController@fetch_match')->name('fetch-match');
+Route::group(['prefix' => 'predictions'], function(){
+    Route::match(['get', 'post'], '/create', 'PredictionController@create');
+    Route::match(['get', 'post'], '/freemium/matches/view/{id}', 'PredictionController@view_free_matches');
+    Route::match(['get', 'post'], '/view/{id}', 'PredictionController@view_predictions');
+});
 
 Route::group(['prefix' => 'predictors'], function () {
     Route::get('/', 'PredictorController@index');

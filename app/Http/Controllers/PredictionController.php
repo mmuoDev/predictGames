@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\League;
 use Auth;
 use Illuminate\Http\Request;
 use App\PredictionCodes;
@@ -17,52 +18,84 @@ class PredictionController extends Controller
     {
         $this->middleware('auth');
     }
+    public function view_free_matches($id){
+        $matches = DB::select("
+        select m.match as match_id, g.id as game_id, u.user_rating as rating from  predictions as p, matches as m, games as g, users as u where
+        u.id = g.user_id and  
+        g.id = p.game_id and m.id = g.match_id  and g.match_id = '$id' 
+        group by p.game_id
+        ");
 
+        return view('predictions.free_view', compact('matches'));
+    }
+    public function view_predictions(Request $request, $id){
+        $predictions = DB::select("select c.definition as codes from games as g, predictions as p, prediction_codes as c
+        where g.id = p.game_id and
+        c.id = p.prediction_id and 
+        g.id = '$id'");
+        $users = DB::select("select u.id as id, u.name as fullname, u.user_rating as rating from games as g, users as u 
+         where g.user_id = u.id and g.id = '$id'");
+        return view('predictions.predictions', compact('predictions', 'users'));
+    }
+    public function fetch_match(Request $request){
+        $league = $request->league;
+        $matches = DB::select("select * from matches where league_id = '$league'");
+        return response()->json($matches);
+    }
     public function create(Request $request){
         $method = $request->isMethod('post');
+        $leagues = League::all();
         if($method){
-            //Process form
-            $validator = Validator::make($request->all(), [
-                'match' => 'required',
-                'match_date' => 'required',
-                'match_prediction' => 'required'
-            ],
-                ['match_prediction.required' => 'At least one prediction is needed']
-            );
-            if($validator->fails()){
-                return back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-            //Insert into game table
-            $game = Game::create([
-                'user_id' => Auth::user()->id,
-                'game' => $request->match,
-                'game_date' => date("Y-m-d",strtotime($request->match_date))
-            ]);
-            if($game){
-                //var_dump();exit;
-                //Get the predictions for this game
-                $game_id = $game->id;
-                foreach ($request->match_prediction as $id => $value){
-                    $predictions = Prediction::create(
-                        [
-                            'game_id' => $game_id,
-                            'prediction_id' => $value
-                        ]
-                    );
-                }
-                if($predictions){
+            //Confirm that this user has not made any predictions for this match
+            $user_id = Auth::user()->id;
+            $sql = DB::select("select * from games where match_id = '$request->match' and user_id  = '$user_id'");
+            if(count($sql) == 0){
+                //Process
+                //var_dump($request->league);exit;
+                $validator = Validator::make($request->all(), [
+                    'match' => 'required',
+                    'league' => 'required',
+                    'match_prediction' => 'required'
+                ],
+                    ['match_prediction.required' => 'At least one prediction is needed']
+                );
+                if($validator->fails()){
                     return back()
-                        ->with('status', 'Prediction added');
+                        ->withErrors($validator)
+                        ->withInput();
                 }
+                //Insert into game table
+                $game = Game::create([
+                    'user_id' => Auth::user()->id,
+                    'league_id' => $request->league,
+                    'match_id' => $request->match
+                ]);
+                if($game){
+                    //var_dump();exit;
+                    //Get the predictions for this game
+                    $game_id = $game->id;
+                    foreach ($request->match_prediction as $id => $value){
+                        $predictions = Prediction::create(
+                            [
+                                'game_id' => $game_id,
+                                'prediction_id' => $value
+                            ]
+                        );
+                    }
+                    if($predictions){
+                        return back()
+                            ->with('status', 'Prediction added');
+                    }
+                }
+            }else{
+                return back()->with('error', 'Prediction(s) already made for selected match');
             }
         }else{
             //return view
             //fetch all prediction codes
             $items = DB::select("select * from prediction_codes");
-            return view('predictions/create')
-                    ->with('items', $items);
+            return view('predictions.create', compact('items', 'leagues'));
+                    //->with('items', $items);
         }
     }
     public function view(Request $request)

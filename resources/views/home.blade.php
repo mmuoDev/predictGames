@@ -12,73 +12,75 @@
                                     <li><a href="#create" data-toggle="tab">Premium Predictions</a></li>
                                 </ul>
                                     <div id="myTabContent" class="tab-content">
-                                    <div class="tab-pane active in" id="login">
+                                        <div class="tab-pane active in" id="login">
+                                            <div class="" style="padding-top: 10px;">
+                                                <a class="btn btn-primary btn-sm" role="button" data-toggle="collapse" href="#epl" aria-expanded="false" aria-controls="collapseExample">
+                                                    EPL
+                                                </a>
+                                                <button class="btn btn-danger btn-sm" type="button" data-toggle="collapse" data-target="#la_liga" aria-expanded="false" aria-controls="collapseExample">
+                                                    LA LIGA
+                                                </button>
+                                                <div class="collapse" id="epl" style="padding-top: 10px">
+                                                    <div class="well">
+                                                        <table class='table table-bordered' id='prediction'>
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Match</th>
+                                                                <th>Match Date</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            </thead>
+                                                            @if(isset($epl_free_predictions))
+                                                                <tbody>
+                                                                    @foreach($epl_free_predictions as $epl_free_prediction)
+                                                                        <?php
+                                                                        $date = date("D, M j, Y", strtotime($epl_free_prediction->match_date));
+                                                                        ?>
+                                                                    <tr>
+                                                                        <td>{{$epl_free_prediction->name}}</td>
+                                                                        <td>{{$date}}</td>
+                                                                        <td><a href="{{url('predictions/freemium/matches/view/'. $epl_free_prediction->id)}}" class="btn btn-default btn-sm"><i class="fa fa-eye"></i> View</a> </td>
 
-                                        <table class='table table-bordered' id='predictions'>
-                                            <thead>
-                                            <tr>
-                                                <th>Match</th>
-                                                <th>Match Date</th>
-                                                <th>Predictor (Level)</th>
-                                                <th></th>
-                                            </tr>
-                                            </thead>
-                                            @if(isset($free_predictions))
-                                                <tbody>
-                                                    @foreach($free_predictions as $free_prediction)
-                                                        <?php
-                                                        $date = date("D, M j, Y", strtotime($free_prediction->game_date));
-                                                        ?>
-                                                    <tr>
-                                                        <td>{{$free_prediction->game}}</td>
-                                                        <td>{{$date}}</td>
-                                                        <td>{{ucfirst($free_prediction->fullname)}}
-
-                                                            @if($free_prediction->id == 1)
-                                                                ({{ucfirst($free_prediction->status)}}) <i class="fa fa-frown-o" aria-hidden="true"></i>
-                                                            @elseif($free_prediction->id == 2)
-                                                                ({{ucfirst($free_prediction->status)}}) <i class="fa fa-meh-o" aria-hidden="true"></i>
-                                                            @elseif($free_prediction->id == 3)
-                                                                ({{ucfirst($free_prediction->status)}}) <i class="fa fa-smile-o" aria-hidden="true"></i>
+                                                                    </tr>
+                                                                    @endforeach
+                                                                </tbody>
                                                             @endif
-                                                            </td>
-                                                        <td>
-                                                            <form action="{{url('predictions/freemium/view')}}" method="post">
-                                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                                <input type="hidden" name="game_id" value="{{$free_prediction->game_id}}">
-                                                                <input type="hidden" name="user_id" value="{{$free_prediction->user_id}}">
-                                                                <button type="submit" class="btn btn-danger" aria-label="Left Align">
-                                                                    View
-                                                                    <span class="fa fa-eye fa-lg" aria-hidden="true"></span>
-                                                                </button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            @endif
-                                        </table>
-                                    </div>
-                                    <div class="tab-pane fade" id="create">
-                                        <table class='table table-bordered' id='prediction'>
-                                            <thead>
-                                            <tr>
-                                                <th>Match</th>
-                                                <th>Match Date</th>
-                                                <th>Predictor's Star</th>
-                                                <th>See Prediction</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="collapse" id="la_liga" style="padding-top: 10px">
+                                                    <div class="well">
+                                                        <table class='table table-bordered' id='predictions'>
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Match</th>
+                                                                <th>Match Date</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            </thead>
+                                                            @if(isset($liga_free_predictions))
+                                                                <tbody>
+                                                                @foreach($liga_free_predictions as $liga_free_prediction)
+                                                                    <?php
+                                                                    $date = date("D, M j, Y", strtotime($liga_free_prediction->match_date));
+                                                                    ?>
+                                                                    <tr>
+                                                                        <td>{{$liga_free_prediction->name}}</td>
+                                                                        <td>{{$date}}</td>
+                                                                        <td><a href="{{url('predictions/freemium/matches/view/'. $liga_free_prediction->id)}}" class="btn btn-default btn-sm"><i class="fa fa-eye"></i> View</a> </td>
+
+                                                                    </tr>
+                                                                @endforeach
+                                                                </tbody>
+                                                            @endif
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="create">
+
+                                        </div>
                                     </div>
                             </div>
                         </div>

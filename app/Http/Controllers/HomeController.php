@@ -31,16 +31,34 @@ class HomeController extends Controller
     public function index()
     {
         $user_id = Auth::user()->id;
-        $free_predictions = DB::select(
-            "select g.game as game, g.id as game_id, g.user_id as user_id, u.name as fullname, g.game_date as game_date,  sg.id as id, sg.code as status from games as g, users as u,sys_grades as sg 
-             where 
-              u.make_prediction_category = g.user_id and 
-              g.user_id != $user_id  and 
-              u.make_prediction_category = 1 and 
-              u.user_rating = sg.id and 
-              date(g.game_date) >= CURDATE()
-              "
+        $epl_free_predictions = DB::select(
+            "select a.match as name, a.match_date as match_date, a.id as id from games as g, matches as a, users as u,
+            leagues as c
+            WHERE 
+            c.id = a.league_id and 
+            g.match_id = a.id and u.id = g.user_id and 
+            g.user_id != $user_id  and 
+            u.make_prediction_category = 1 and 
+            a.league_id = 1 and 
+            date(a.match_date) >= CURDATE()
+            GROUP BY a.id order by a.match_date ASC 
+            "
         );
-        return view('home', compact("free_predictions"));
+
+        $liga_free_predictions = DB::select(
+            "select a.match as name, a.match_date as match_date, a.id as id from games as g, matches as a, users as u,
+            leagues as c
+            WHERE 
+            c.id = a.league_id and 
+            g.match_id = a.id and u.id = g.user_id and 
+            g.user_id != $user_id  and 
+            u.make_prediction_category = 1 and 
+            a.league_id = 2 and 
+            date(a.match_date) >= CURDATE()
+            GROUP BY a.id order by a.match_date ASC 
+            "
+        );
+        //var_dump($free_predictions);exit;
+        return view('home', compact("epl_free_predictions", 'liga_free_predictions'));
     }
 }
