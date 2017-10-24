@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\League;
+use App\PredictionRating;
 use Auth;
 use Illuminate\Http\Request;
 use App\PredictionCodes;
@@ -18,6 +19,23 @@ class PredictionController extends Controller
     {
         $this->middleware('auth');
     }
+    public function rating(Request $request){
+        $rating = $request->rating;
+        $game_id = $request->game_id;
+        $predictor_id = $request->user_id;
+        $user_id = Auth::user()->id;
+
+        //Insert into prediction-ratings table and update
+        //rating columns on games and user for the predictor
+
+        $rating = PredictionRating::create([
+           'rating' => $rating,
+            'game_id' => $game_id,
+            'predictor_id' => $predictor_id,
+            'user_id' => $user_id
+        ]);
+
+    }
     public function view_free_matches($id){
         $matches = DB::select("
         select m.match as match_id, g.id as game_id, u.user_rating as rating from  predictions as p, matches as m, games as g, users as u where
@@ -29,11 +47,12 @@ class PredictionController extends Controller
         return view('predictions.free_view', compact('matches'));
     }
     public function view_predictions(Request $request, $id){
+
         $predictions = DB::select("select c.definition as codes from games as g, predictions as p, prediction_codes as c
         where g.id = p.game_id and
         c.id = p.prediction_id and 
         g.id = '$id'");
-        $users = DB::select("select u.id as id, u.name as fullname, u.user_rating as rating from games as g, users as u 
+        $users = DB::select("select u.id as id, g.id as game_id, u.name as fullname, u.user_rating as rating from games as g, users as u 
          where g.user_id = u.id and g.id = '$id'");
         return view('predictions.predictions', compact('predictions', 'users'));
     }

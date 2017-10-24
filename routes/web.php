@@ -24,6 +24,7 @@ Route::group(['prefix' => 'predictions'], function(){
     Route::match(['get', 'post'], '/create', 'PredictionController@create');
     Route::match(['get', 'post'], '/freemium/matches/view/{id}', 'PredictionController@view_free_matches');
     Route::match(['get', 'post'], '/view/{id}', 'PredictionController@view_predictions');
+    Route::post('/rate', 'PredictionController@rating');
 });
 
 Route::group(['prefix' => 'predictors'], function () {

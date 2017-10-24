@@ -33,12 +33,18 @@
                                                 @endif
                                                 <br />
                                                 <i class="glyphicon glyphicon-gift"></i>
-                                                Rate this user: <br>
-                                                <div id="slidecontainer">
-                                                    <input type="range" min="10" max="50" value="0" class="slider" id="myRange">
-                                                    <p>Value: <span id="demo"></span></p>
-                                                </div>
-                                                <a href="" class="btn btn-danger btn-sm">Back</a>
+                                                <form action="{{url('predictions/rate')}}" method="post">
+                                                    {{csrf_field()}}
+                                                    Rate this user: <br>
+                                                    <div id="slidecontainer">
+                                                        <input type="hidden" name="game_id" value="{{$user->game_id}}">
+                                                        <input type="hidden" name="user_id" value="{{$user->id}}">
+                                                        <input type="range" min="1" max=10 value="" class="slider" name="rating" id="myRange">
+                                                        <p>Value: <span id="demo"></span></p>
+                                                    </div>
+
+                                                    <input type="submit" class="btn btn-danger btn-sm" name="submit" value="Submit">
+                                                </form>
                                             </p>
                                             <!-- Split button -->
 
